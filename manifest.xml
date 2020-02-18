@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <exporttime>2020-02-18 15:46:03</exporttime>
+  <name>Billings</name>
+  <label>Billings</label>
+  <parent>Sales</parent>
+  <dependencies>
+    <vtiger_version>7.1.0</vtiger_version>
+  </dependencies>
+  <license>
+    <inline><![CDATA[***************************************************************************************************************************
+ *  Module              : Billings
+ *  Version             : 1.0
+ *  Vtiger              : 7.1.0
+ *  Author              : Module Builder v 1.0 - Technokrafts Labs Pvt Ltd.
+ *  Supported browsers  : Internet Explorer 7 or higher, Mozilla Firefox 3.0 or higher, Google Chrome, Safari
+ ****************************************************************************************************************************
+
+ Terms and Conditions:
+
+ No Warranty. The Software is provided "as is" without warranty of any kind, either express
+ or implied, including without limitation any implied warranties of condition, uninterrupted
+ use, merchantability, fitness for a particular purpose, or non-infringement.
+
+ LICENSE
+
+ The "Billings" Module is build from the Module Builder Module.
+
+ The Billings License will be referred to as "The license" in the remainder of this text.
+
+ This irrevocable, perpetual license covers all versions 1.xx of Billings.
+
+ This license gives the holder right to install Billings on ONE vtiger CRM installation.
+
+ The license holder is allowed to make modifications to the Billings sources but in no
+ event will the original copyright holders of this library be held responsible for action
+ or actions resulting from any modifications of the source.
+
+ The license holder is not required to publicize or otherwise make available any software
+ used in conjunction with Module Builder.
+
+ The license holder may not re-distribute the library on it's own or versions thereof
+ to third party without prior written permission of the copyright holder.
+
+ Billings License does not allow the library to be redistributed as part of another
+ product.
+
+ The license may be transferred to another vtiger CRM instalation only with prior
+ written permission.
+
+ The wording of this license may change without notice for future versions of Billings.]]></inline>
+  </license>
+  <tables>
+    <table>
+      <name>vtiger_billings</name>
+      <sql><![CDATA[CREATE TABLE `vtiger_billings` (`billingsid` int(11) NOT NULL, `billingsno` varchar(100) default NULL, `billings_tks_zip` varchar(250) default NULL ,`billings_tks_pdf` varchar(250) default NULL ,`billings_tks_xml` varchar(250) default NULL ,`billings_tks_serial` varchar(255) default NULL ,`billings_tks_json` varchar(250) default NULL ,`billings_tks_resolution` int(255) default NULL ,`billings_tks_invoice` varchar(255) default NULL   , PRIMARY KEY (`billingsid`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8]]></sql>
+    </table>
+    <table>
+      <name>vtiger_billingscf</name>
+      <sql><![CDATA[CREATE TABLE `vtiger_billingscf` (`billingsid` int(11) NOT NULL, PRIMARY KEY (`billingsid`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8]]></sql>
+    </table>
+    <table>
+      <name>vtiger_billings_user_field</name>
+      <sql><![CDATA[CREATE TABLE `vtiger_billings_user_field` (`recordid` int(25) NOT NULL, `userid` int(25) NOT NULL, `starred` varchar(100) default NULL , KEY (`vtiger_billings_user_field`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8]]></sql>
+    </table>
+  </tables>
+  <blocks>
+    <block>
+      <label>VAULT</label>
+      <fields>
+        <field>
+          <fieldname>billingsno</fieldname>
+          <uitype>4</uitype>
+          <columnname>billingsno</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Billings No</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>0</sequence>
+          <maximumlength>100</maximumlength>
+          <typeofdata>V~M</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>1</masseditable>
+        </field>
+        <field>
+          <fieldname>billings_tks_zip</fieldname>
+          <uitype>21</uitype>
+          <columnname>billings_tks_zip</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Zip</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>1</sequence>
+          <maximumlength>250</maximumlength>
+          <typeofdata>V~O</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+        <field>
+          <fieldname>billings_tks_pdf</fieldname>
+          <uitype>21</uitype>
+          <columnname>billings_tks_pdf</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Pdf</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>2</sequence>
+          <maximumlength>250</maximumlength>
+          <typeofdata>V~O</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+        <field>
+          <fieldname>billings_tks_xml</fieldname>
+          <uitype>21</uitype>
+          <columnname>billings_tks_xml</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Xml</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>3</sequence>
+          <maximumlength>250</maximumlength>
+          <typeofdata>V~O</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+        <field>
+          <fieldname>billings_tks_serial</fieldname>
+          <uitype>2</uitype>
+          <columnname>billings_tks_serial</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Serial</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>4</sequence>
+          <maximumlength>255</maximumlength>
+          <typeofdata>V~M</typeofdata>
+          <quickcreate>2</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+        <field>
+          <fieldname>billings_tks_json</fieldname>
+          <uitype>21</uitype>
+          <columnname>billings_tks_json</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Json</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>5</sequence>
+          <maximumlength>250</maximumlength>
+          <typeofdata>V~O</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+        <field>
+          <fieldname>assigned_user_id</fieldname>
+          <uitype>53</uitype>
+          <columnname>smownerid</columnname>
+          <tablename>vtiger_crmentity</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Assigned To</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>7</sequence>
+          <maximumlength>100</maximumlength>
+          <typeofdata>V~M</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <masseditable>1</masseditable>
+        </field>
+        <field>
+          <fieldname>createdtime</fieldname>
+          <uitype>70</uitype>
+          <columnname>createdtime</columnname>
+          <tablename>vtiger_crmentity</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Created Time</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>8</sequence>
+          <maximumlength>100</maximumlength>
+          <typeofdata>T~O</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>2</displaytype>
+          <info_type>BAS</info_type>
+          <masseditable>1</masseditable>
+        </field>
+        <field>
+          <fieldname>modifiedtime</fieldname>
+          <uitype>70</uitype>
+          <columnname>modifiedtime</columnname>
+          <tablename>vtiger_crmentity</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Modified Time</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>9</sequence>
+          <maximumlength>100</maximumlength>
+          <typeofdata>T~O</typeofdata>
+          <quickcreate>1</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>2</displaytype>
+          <info_type>BAS</info_type>
+          <masseditable>1</masseditable>
+        </field>
+      </fields>
+    </block>
+    <block>
+      <label>BILLINGS</label>
+      <fields>
+        <field>
+          <fieldname>billings_tks_resolution</fieldname>
+          <uitype>1</uitype>
+          <columnname>billings_tks_resolution</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Resolution</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>1</sequence>
+          <maximumlength>255</maximumlength>
+          <typeofdata>I~M</typeofdata>
+          <quickcreate>2</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+        <field>
+          <fieldname>billings_tks_invoice</fieldname>
+          <uitype>2</uitype>
+          <columnname>billings_tks_invoice</columnname>
+          <tablename>vtiger_billings</tablename>
+          <generatedtype>1</generatedtype>
+          <fieldlabel>Invoice</fieldlabel>
+          <readonly>1</readonly>
+          <presence>2</presence>
+          <defaultvalue></defaultvalue>
+          <sequence>2</sequence>
+          <maximumlength>255</maximumlength>
+          <typeofdata>V~M</typeofdata>
+          <quickcreate>2</quickcreate>
+          <quickcreatesequence></quickcreatesequence>
+          <displaytype>1</displaytype>
+          <info_type>BAS</info_type>
+          <helpinfo><![CDATA[]]></helpinfo>
+          <masseditable>0</masseditable>
+        </field>
+      </fields>
+    </block>
+  </blocks>
+  <customviews>
+    <customview>
+      <viewname>All</viewname>
+      <setdefault>false</setdefault>
+      <setmetrics>false</setmetrics>
+      <fields>
+        <field>
+          <fieldname>billingsno</fieldname>
+          <columnindex>1</columnindex>
+        </field>
+        <field>
+          <fieldname>billings_tks_serial</fieldname>
+          <columnindex>2</columnindex>
+        </field>
+        <field>
+          <fieldname>billings_tks_invoice</fieldname>
+          <columnindex>3</columnindex>
+        </field>
+        <field>
+          <fieldname>assigned_user_id</fieldname>
+          <columnindex>4</columnindex>
+        </field>
+      </fields>
+    </customview>
+  </customviews>
+  <sharingaccess>
+    <default>private</default>
+  </sharingaccess>
+  <actions>
+    <action>
+      <name><![CDATA[Import]]></name>
+      <status>enabled</status>
+    </action>
+    <action>
+      <name><![CDATA[Export]]></name>
+      <status>enabled</status>
+    </action>
+    <action>
+      <name><![CDATA[Merge]]></name>
+      <status>enabled</status>
+    </action>
+  </actions>
+  <relatedlists>
+    <relatedlist>
+      <function>get_related_list</function>
+      <label>Invoice</label>
+      <sequence>1</sequence>
+      <presence>0</presence>
+      <actions>
+        <action>ADD</action>
+        <action>SELECT</action>
+      </actions>
+      <relatedmodule>Invoice</relatedmodule>
+    </relatedlist>
+  </relatedlists>
+  <crons></crons>
+</module>
