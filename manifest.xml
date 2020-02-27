@@ -8,47 +8,7 @@
     <vtiger_version>7.1.0</vtiger_version>
   </dependencies>
   <license>
-    <inline><![CDATA[***************************************************************************************************************************
- *  Module              : Billings
- *  Version             : 1.0
- *  Vtiger              : 7.1.0
- *  Author              : Module Builder v 1.0 - Technokrafts Labs Pvt Ltd.
- *  Supported browsers  : Internet Explorer 7 or higher, Mozilla Firefox 3.0 or higher, Google Chrome, Safari
- ****************************************************************************************************************************
-
- Terms and Conditions:
-
- No Warranty. The Software is provided "as is" without warranty of any kind, either express
- or implied, including without limitation any implied warranties of condition, uninterrupted
- use, merchantability, fitness for a particular purpose, or non-infringement.
-
- LICENSE
-
- The "Billings" Module is build from the Module Builder Module.
-
- The Billings License will be referred to as "The license" in the remainder of this text.
-
- This irrevocable, perpetual license covers all versions 1.xx of Billings.
-
- This license gives the holder right to install Billings on ONE vtiger CRM installation.
-
- The license holder is allowed to make modifications to the Billings sources but in no
- event will the original copyright holders of this library be held responsible for action
- or actions resulting from any modifications of the source.
-
- The license holder is not required to publicize or otherwise make available any software
- used in conjunction with Module Builder.
-
- The license holder may not re-distribute the library on it's own or versions thereof
- to third party without prior written permission of the copyright holder.
-
- Billings License does not allow the library to be redistributed as part of another
- product.
-
- The license may be transferred to another vtiger CRM instalation only with prior
- written permission.
-
- The wording of this license may change without notice for future versions of Billings.]]></inline>
+    <inline><![CDATA[]]></inline>
   </license>
   <tables>
     <table>
