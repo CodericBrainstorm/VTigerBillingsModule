@@ -79,11 +79,16 @@ class Invoice_Record_Model extends Inventory_Record_Model {
         return $items[$index];
     }
 
+    static public function getDV($nit) {
+        $dv = new DV($nit);
+        return $dv->getDV();
+    }
+
     public function getDianList($case) {
         $cache_file = "test/" . $case . ".json";
         $url = "https://endpoint.emision.co/dian-tables/" . $case;
 
-        if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 2592000 ))) {
+        if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 2592000))) {
             // Cache file is less than five minutes old. 
             // Don't bother refreshing, just use the file as-is.
             $file = file_get_contents($cache_file);
@@ -112,18 +117,17 @@ class Invoice_Record_Model extends Inventory_Record_Model {
 
         $serial = $this->affectSerial($res, $prefix);
 
-        //$recordModel->set('number', $serial);
-            //$recordModel->set('resolution', $resolution);
-            //$recordModel->set('prefix', $prefix);
-        $query = "UPDATE `vtiger_invoicecf`
+        $query = "UPDATE `vtiger_invoice`
+LEFT JOIN `vtiger_invoicecf` ON `vtiger_invoice`.`invoiceid`=`vtiger_invoicecf`.`invoiceid`
                     SET
-                        `number` = ?,
-                        `prefix` = ?,
-                        `resolution` = ?
-                        WHERE `invoiceid` = ?;";
-        //echo $query;
-        $result = $adb->pquery($query, array($serial, $prefix, $res,$id));
+                    `prefix` = ?,
+                        `resolution` = ?,
+                        `invoice_no` = ?
+                        WHERE  `vtiger_invoice`.`invoiceid` = ?;";
+        $result = $adb->pquery($query, array($prefix, $res, $serial, $id));
+        
     }
+
     public function affectSerial($res, $prefix) {
         global $log;
         global $adb;
@@ -139,7 +143,6 @@ class Invoice_Record_Model extends Inventory_Record_Model {
         global $theme, $current_user;
 
         $curl = curl_init();
-
         curl_setopt_array($curl, array(
             CURLOPT_URL => "https://test.endpoint.emision.co/api/v1/service/invoice",
             CURLOPT_RETURNTRANSFER => true,
@@ -158,11 +161,10 @@ class Invoice_Record_Model extends Inventory_Record_Model {
         $response = curl_exec($curl);
         curl_close($curl);
         $result = json_decode($response);
-        print_r($response);
         if ($result->status == "success") {
-            file_put_contents("test/facturas/" . $result->document->number . ".pdf", base64_decode($result->document->pdfBase64Bytes));
+            //file_put_contents("test/facturas/" . $result->document->number . ".pdf", base64_decode($result->document->pdfBase64Bytes));
         } elseif ($result->status == "error") {
-            print_r($result->status);
+            //print_r($result);
         }
         return $result;
     }
@@ -186,7 +188,7 @@ function getJsonInvoice($id = '', $related) {
         "document_type_code" => $adb->query_result($result, 0, 'document_type_code'),
         "operation_type_code" => $adb->query_result($result, 0, 'operation_type_code'),
         "resolution_number" => $adb->query_result($result, 0, 'resolution_number'),
-        "send" =>true,
+        "send" => true,
         "date" => $adb->query_result($result, 0, 'date'),
         "time" => $adb->query_result($result, 0, 'time'),
         "currency_type_code" => $adb->query_result($result, 0, 'currency_type_code')
@@ -210,18 +212,18 @@ function getJsonInvoice($id = '', $related) {
         "liability_type_code" => $adb->query_result($result, 0, 'liability_type_code')
     );
     $invoice["invoice_lines"] = getJsonProducts($id, $related);
-    $taxs=array();
-    $line_extension_amount=0;
-    $tax_exclusive_amount=0;
-    $tax_inclusive_amount=0;
-    foreach($invoice["invoice_lines"] AS $prod){
-        $line_extension_amount +=$prod["line_extension_amount"];
-        $tax_exclusive_amount +=$prod["tax_totals"][0]["taxable_amount"];
-        $tax_inclusive_amount +=$prod["tax_totals"][0]["tax_amount"];
-        $taxs[]=$prod["tax_totals"][0];
+    $taxs = array();
+    $line_extension_amount = 0;
+    $tax_exclusive_amount = 0;
+    $tax_inclusive_amount = 0;
+    foreach ($invoice["invoice_lines"] AS $prod) {
+        $line_extension_amount += $prod["line_extension_amount"];
+        $tax_exclusive_amount += $prod["tax_totals"][0]["taxable_amount"];
+        $tax_inclusive_amount += $prod["tax_totals"][0]["tax_amount"];
+        $taxs[] = $prod["tax_totals"][0];
     }
-    $invoice["tax_totals"]=$taxs;
-    
+    $invoice["tax_totals"] = $taxs;
+
     //legal_monetary_totals
     $invoice["payment_form"] = array(
         "payment_form_code" => "1",
@@ -275,7 +277,8 @@ function getJsonProducts($id = '', $related) {
         $item_identification_type_code = $adb->query_result($result, $i - 1, 'item_identification_type_code');
         $price_amount = $adb->query_result($result, $i - 1, 'price_amount');
         $base_quantity = $adb->query_result($result, $i - 1, 'base_quantity');
-        $tax=19;
+        $tax = 19;
+        settype($free_of_charge_indicator, "bool");
         $product[] = array(
             'unit_measure_code' => $unit_measure_code,
             'invoiced_quantity' => $invoiced_quantity,
@@ -287,12 +290,83 @@ function getJsonProducts($id = '', $related) {
             'price_amount' => $price_amount,
             'base_quantity' => $base_quantity,
             'tax_totals' => array(new ArrayObject(array(
-                "tax_code" => "01",
-                "tax_amount" => ($line_extension_amount/100)*$tax,
-                "taxable_amount" => $line_extension_amount,
-                "percent" => 19
-            ))),
+                    "tax_code" => "01",
+                    "tax_amount" => ($line_extension_amount / 100) * $tax,
+                    "taxable_amount" => $line_extension_amount,
+                    "percent" => 19
+                        ))),
         );
     }
     return $product;
+}
+
+class DV {
+
+    /**
+     * Multiplier
+     * @var array
+     */
+    public $multiplier = [
+        1 => 3,
+        2 => 7,
+        3 => 13,
+        4 => 17,
+        5 => 19,
+        6 => 23,
+        7 => 29,
+        8 => 37,
+        9 => 41,
+        10 => 43,
+        11 => 47,
+        12 => 53,
+        13 => 59,
+        14 => 67,
+        15 => 71,
+    ];
+
+    /**
+     * NIT
+     * @var int
+     */
+    private $nit;
+
+    /**
+     * Nit array
+     * @var array
+     */
+    private $nitArray;
+
+    /**
+     * Length
+     * @var int
+     */
+    private $length;
+
+    /**
+     * Construct
+     */
+    public function __construct(int $nit) {
+        $this->nit = $nit;
+        $this->nitArray = str_split($this->nit);
+        $this->length = count($this->nitArray);
+    }
+
+    /**
+     * Get dv
+     * @return int
+     */
+    public function getDV() {
+        $sum = 0;
+
+        foreach ($this->nitArray as $key => $value) {
+            $sum += ($value * $this->multiplier[($this->length - $key)]);
+        }
+
+        if (($mod = ($sum % 11)) > 1) {
+            return (11 - $mod);
+        }
+
+        return $mod;
+    }
+
 }

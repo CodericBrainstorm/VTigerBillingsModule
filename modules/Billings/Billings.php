@@ -103,7 +103,7 @@ class Billings extends Vtiger_CRMEntity {
             Billings::checkWebServiceEntry();
             Billings::moveInvoicePatch($moduleName);
             Billings::appendNewFields($moduleName);
-            //Billings::createViews($moduleName);
+            Billings::createViews($moduleName);
             Billings::createUserFieldTable($moduleName);
             Billings::addInTabMenu($moduleName);
         } else if ($eventType == 'module.disabled') {
@@ -128,21 +128,21 @@ class Billings extends Vtiger_CRMEntity {
     function createViews($module) {
         global $adb;
             $q ="CREATE VIEW `vtiger_view_invoice` AS
-        SELECT 
+    SELECT 
         `vtiger_invoice`.`invoiceid` AS `id`,
-    NULL AS `number`,
-    NULL AS `prefix`,
-    NULL AS `resolution_number`,
-    '01' AS `document_type_code`,
-    '10' AS `operation_type_code`,
-    date(now()) AS `date`,
-    time(now()) AS `time`,
-    'COP' AS `currency_type_code`,
-    `vtiger_accountscf`.`identification_number` AS `identification_number`,
-    `vtiger_accountscf`.`dv` AS `dv`,
-    `vtiger_account`.`accountname` AS `name`,
-     `vtiger_accountscf`.`phone` AS `phone`,
-    CONCAT(`vtiger_invoicebillads`.`bill_street`,
+        NULL AS `number`,
+        NULL AS `prefix`,
+        NULL AS `resolution_number`,
+        '01' AS `document_type_code`,
+        '10' AS `operation_type_code`,
+        CAST(CURRENT_TIMESTAMP() AS DATE) AS `date`,
+        CAST(CURRENT_TIMESTAMP() AS TIME) AS `time`,
+        'COP' AS `currency_type_code`,
+        `vtiger_account`.`siccode` AS `identification_number`,
+        `vtiger_accountscf`.`dv` AS `dv`,
+        `vtiger_account`.`accountname` AS `name`,
+        `vtiger_account`.`phone` AS `phone`,
+        CONCAT(`vtiger_invoicebillads`.`bill_street`,
                 ',',
                 `vtiger_invoicebillads`.`bill_city`,
                 ' - ',
@@ -153,28 +153,29 @@ class Billings extends Vtiger_CRMEntity {
                 `vtiger_invoicebillads`.`bill_country`,
                 ' ',
                 `vtiger_invoicebillads`.`bill_pobox`) AS `address`,
-    `vtiger_accountscf`.`email` AS `email`,
-    `vtiger_accountscf`.`merchant_registration` AS `merchant_registration`,
-   `vtiger_accountscf`.`identification_type_code` AS `identification_type_code`,
-    'es' AS `language_code`,
-    'organization_type_code' AS `organization_type_code`,
-    'CO' AS `country_code`,
-    `vtiger_accountscf`.`municipality` AS `municipality_code`,
-     `vtiger_accountscf`.`regime_type_code` AS `regime_type_code`,
-     `vtiger_accountscf`.`tax_code` AS `tax_code`,
-    `vtiger_accountscf`.`liability_type_code` AS `liability_type_code`,
-    vtiger_invoice.subtotal AS `line_extension_amount`,
-    'tax_exclusive_amount' AS `tax_exclusive_amount`,
-    'tax_inclusive_amount' AS `tax_inclusive_amount`,
-    vtiger_invoice.adjustment AS `allowance_total_amount`,
-    vtiger_invoice.s_h_amount AS `charge_total_amount`,
-    vtiger_invoice.subtotal AS `payable_amount`
-    
+        `vtiger_account`.`email1` AS `email`,
+        `vtiger_accountscf`.`merchant_registration` AS `merchant_registration`,
+        `vtiger_accountscf`.`identification_type_code` AS `identification_type_code`,
+        'es' AS `language_code`,
+        '1' AS `organization_type_code`,
+        'CO' AS `country_code`,
+        `vtiger_municipality`.`number` AS `municipality_code`,
+        `vtiger_accountscf`.`regime_type_code` AS `regime_type_code`,
+        `vtiger_accountscf`.`tax_code` AS `tax_code`,
+        `vtiger_accountscf`.`liability_type_code` AS `liability_type_code`,
+        `vtiger_invoice`.`subtotal` AS `line_extension_amount`,
+        NULL AS `tax_exclusive_amount`,
+        NULL AS `tax_inclusive_amount`,
+        `vtiger_invoice`.`adjustment` AS `allowance_total_amount`,
+        `vtiger_invoice`.`s_h_amount` AS `charge_total_amount`,
+        `vtiger_invoice`.`subtotal` AS `payable_amount`
     FROM
         ((((((`vtiger_invoice`
         LEFT JOIN `vtiger_account` ON (`vtiger_account`.`accountid` = `vtiger_invoice`.`accountid`))
         LEFT JOIN `vtiger_invoicecf` ON (`vtiger_invoicecf`.`invoiceid` = `vtiger_invoice`.`invoiceid`))
         LEFT JOIN `vtiger_accountscf` ON (`vtiger_accountscf`.`accountid` = `vtiger_invoice`.`accountid`))
+        LEFT JOIN `vtiger_municipality` ON (`vtiger_municipality`.`municipalityid` = `vtiger_accountscf`.`municipality`))
+        LEFT JOIN `vtiger_department` ON (`vtiger_department`.`departmentid` = `vtiger_accountscf`.`department`))
         LEFT JOIN `vtiger_invoicebillads` ON (`vtiger_invoicebillads`.`invoicebilladdressid` = `vtiger_invoice`.`invoiceid`))";
             $adb->pquery($q1, array());
             
@@ -185,10 +186,7 @@ class Billings extends Vtiger_CRMEntity {
             WHEN `vtiger_products`.`productid` <> '' THEN `vtiger_productcf`.`unit_measure_code`
             ELSE `vtiger_servicecf`.`unit_measure_code`
         END AS `unit_measure_code`,
-        CASE
-            WHEN `vtiger_products`.`productid` <> '' THEN `vtiger_productcf`.`free_of_charge`
-            ELSE `vtiger_servicecf`.`free_of_charge`
-        END AS `free_of_charge`,
+        0 AS `free_of_charge`,
         CASE
             WHEN `vtiger_products`.`productid` <> '' THEN `vtiger_products`.`productname`
             ELSE `vtiger_service`.`servicename`
@@ -300,6 +298,7 @@ class Billings extends Vtiger_CRMEntity {
         $module->save();
         $module->initWebservice();
         $module->initTables();
+        $module->setDefaultSharing(Public_ReadOnly);
 
         $block1 = new Vtiger_Block();
         $block1->label = 'LBL_TAXONOMY_INFORMATION';
@@ -338,6 +337,7 @@ class Billings extends Vtiger_CRMEntity {
         $module->save();
         $module->initWebservice();
         $module->initTables();
+        $module->setDefaultSharing(Public_ReadOnly);
 
         $block1 = new Vtiger_Block();
         $block1->label = 'LBL_TAXONOMY_INFORMATION';
@@ -378,6 +378,7 @@ class Billings extends Vtiger_CRMEntity {
         $module->save();
         $module->initWebservice();
         $module->initTables();
+        $module->setDefaultSharing(Public_ReadOnly);
 
         $block1 = new Vtiger_Block();
         $block1->label = 'LBL_TAXONOMY_INFORMATION';

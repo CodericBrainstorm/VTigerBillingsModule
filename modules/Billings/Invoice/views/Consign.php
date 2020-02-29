@@ -9,6 +9,8 @@
  * All Rights Reserved.
  * ********************************************************************************** */
 
+
+
 class Invoice_Consign_View extends Inventory_Detail_View {
 
     public function process(Vtiger_Request $request) {
@@ -16,25 +18,27 @@ class Invoice_Consign_View extends Inventory_Detail_View {
         $recordId = $request->get('record');
         $moduleName = $request->getModule();
 
-
-
         if (!$this->record) {
             $this->record = Vtiger_DetailView_Model::getInstance($moduleName, $recordId);
         }
+
         $recordModel = $this->record->getRecord();
         $moduleModel = $recordModel->getModule();
+        
+        if (!$recordModel->getData()["prefix"] && !$recordModel->getData()["prefix"]) {
 
-        $viewer = $this->getViewer($request);
-        $viewer->assign('RECORD', $recordModel);
-        //$viewer->assign('JSON', json_encode($recordModel->getJson()));
-        //$viewer->assign('BLOCK_LIST', $moduleModel->getBlocks());
-        //$viewer->assign('USER_MODEL', Users_Record_Model::getCurrentUserModel());
-        //$viewer->assign('USER_MODEL', Invoice_Record_Model);
-
-        //$viewer->assign('MODULE_NAME', $moduleName);
+            $viewer = $this->getViewer($request);
+            $viewer->assign('RECORD', $recordModel);
+            //$viewer->assign('JSON', json_encode($recordModel->getJson()));
+            //$viewer->assign('BLOCK_LIST', $moduleModel->getBlocks());
+            //$viewer->assign('USER_MODEL', Users_Record_Model::getCurrentUserModel());
+            //$viewer->assign('USER_MODEL', Invoice_Record_Model);
+            //$viewer->assign('MODULE_NAME', $moduleName);
 //$viewer->assign('RELATED_PRODUCTS', $recordModel->getProductsJson($request));
 
-        return $viewer->view('ConsignView.tpl', $moduleName, false);
+            return $viewer->view('ConsignView.tpl', $moduleName, false);
+        } else
+            return parent::process($request);
     }
 
     function preProcess(Vtiger_Request $request) {
