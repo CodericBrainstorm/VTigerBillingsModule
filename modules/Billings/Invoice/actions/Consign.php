@@ -25,7 +25,7 @@ class Invoice_Consign_Action extends Inventory_Save_Action {
             $json["number"] = $serial;
             $json["prefix"] = $prefix;
             $json["resolution_number"] = $resolution;
-            $json["customer"]["dv"] = Invoice_Record_Model::getDV($json["customer"]["identification_number"]);
+            $json["customer"]["dv"] = $this->getDV($json["customer"]["identification_number"]);
 
             $result = $recordModel->affectDian($json);
             
@@ -53,7 +53,36 @@ class Invoice_Consign_Action extends Inventory_Save_Action {
 
         return $recordModel;
     }
+function getDV($nit) {
+    $multiplier = [
+        1 => 3,
+        2 => 7,
+        3 => 13,
+        4 => 17,
+        5 => 19,
+        6 => 23,
+        7 => 29,
+        8 => 37,
+        9 => 41,
+        10 => 43,
+        11 => 47,
+        12 => 53,
+        13 => 59,
+        14 => 67,
+        15 => 71,
+    ];
+        $sum = 0;
+        $nitarray=str_split($nit);
+        foreach($nitarray as $key => $value) {
+            $sum += ($value * $multiplier[(count($nitarray) - $key)]);
+        }
 
+        if (($mod = ($sum % 11)) > 1) {
+            return (11 - $mod);
+        }
+
+        return $mod;
+    }
     private function getSerial($id) {
 
         global $log;
